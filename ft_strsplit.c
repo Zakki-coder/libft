@@ -1,16 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   beta_ft_strsplit.c                                 :+:      :+:    :+:   */
+/*   ft_strsplit.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jniemine <jniemine@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 19:10:41 by jniemine          #+#    #+#             */
-/*   Updated: 2021/11/24 20:55:20 by jniemine         ###   ########.fr       */
+/*   Updated: 2021/11/30 17:54:32 by jniemine         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include "libft.h"
 
 static int	count_delimiters(const char *s, char c)
 {
@@ -64,6 +65,8 @@ static char	**magic_machine(char **res, char const *s, char c)
 		if ((*s != c && *(s + 1) == c) || (*s != c && *(s + 1) == '\0'))
 		{
 			word_maker(s - word_len, &res, c);
+			if (*(s + 1) == '\0')
+				return (++res);
 			s += 1;
 			word_len = 0;
 			if (*res == NULL)
@@ -87,8 +90,14 @@ char	**ft_strsplit(char const *s, char c)
 	n_delimit = count_delimiters(s, c);
 	res = (char **)malloc(sizeof(char *) * (n_delimit + 1));
 	if (res == NULL)
+	{	
+		free(res);
+		res = NULL;
 		return (NULL);
+	}
 	res = magic_machine(res, s, c);
+	if (res == NULL)
+		ft_freeda((void ***)(&res), n_delimit);
 	*(res) = NULL;
-	return (res - n_delimit);
+	return (res - (n_delimit));
 }
