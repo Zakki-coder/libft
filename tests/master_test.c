@@ -459,6 +459,9 @@ int main(void)
 	ft_res = ft_strstr(haystack, needle);
 	printf("strstr:    %s\nft_strstr: %s\n", res, ft_res);
 	assert(!strcmp(res, ft_res));
+	res = strstr("Hello Hellou", "Hellou");
+	ft_res = ft_strstr("Hello Hellou", "Hellou");
+	assert(!strcmp(res, ft_res));
 	
 	char c = ASCII_MIN;
 	needle = &c;
@@ -468,14 +471,15 @@ int main(void)
 			++c;
 		res = strstr(haystack, needle);
 		ft_res = ft_strstr(haystack, needle);
-		printf("Line nb: %d  *   Haystack: %s *  *  Needle: %s  *  *\n", c, haystack, needle);
-		printf("strstr:    %s\n", res);
-		printf("ft_strstr: %s\n", ft_res);
-		++c;
+		assert(res == ft_res);
+	/*//	printf("Line nb: %d  *   Haystack: %s *  *  Needle: %s  *  *\n", c, haystack, needle);
+	//	printf("strstr:    %s\n", res);
+	//	printf("ft_strstr: %s\n", ft_res);
+	*/	++c;
 	}
 	c = DEL;
 	res = strstr(haystack, needle);
-	ft_res = strstr(haystack, needle);
+	ft_res = ft_strstr(haystack, needle);	//Changed this
 	printf("Line nb: %d  *   Haystack: %s *  *  Needle: %s  *  *\n", c, haystack, needle);
 	printf("strstr:    %s\n", res);
 	printf("ft_strstr: %s\n", ft_res);
@@ -483,6 +487,7 @@ int main(void)
 }
 #endif
 #ifdef STRNSTR
+// Is not standard library so won't work when testing from home
 void test_print(char *o_res, char *you_res)
 {
 	
@@ -543,6 +548,14 @@ int main(void)
 	printf("%d.\n", ++test_nb);
 	n = strlen(haystack) + 10;
 	needle = "can't find this";
+	printf("* Haystack: %s\n* Needle: %s\n* n: %d\n", haystack, needle, n);
+	test_print(strnstr(haystack, needle, n), ft_strnstr(haystack, needle, n));
+
+	//8
+	printf("%d.\n", ++test_nb);
+	haystack = "Hello Hellou";
+	needle = "Hellou";
+	n = strlen(haystack);
 	printf("* Haystack: %s\n* Needle: %s\n* n: %d\n", haystack, needle, n);
 	test_print(strnstr(haystack, needle, n), ft_strnstr(haystack, needle, n));
 	return (0);
@@ -917,6 +930,19 @@ int main(void)
 	return (0);
 }
 #endif
+#ifdef MEMCCPY
+void test(char *s, int n)
+{
+	char *orig = (char *)malloc(sizeof(char) * n + 1);
+	char *yours = (char *)malloc(sizeof(char) * n + 1);
+	
+	const char s1[] = "Kekkonen skied and Kekkonen fished";
+	memccpy(orig, s1, K, strlen(s1));
+	ft_memccpy(yours, s1, K, strlen(s1));
+	if (orig
+
+
+#endif
 #ifdef MEMMOVE
 int g_testnb = 1;
 
@@ -1137,13 +1163,14 @@ int main(void)
 int main(void)
 {
 	char *res;
-	size_t size = 16;
+	size_t size = 5;
 	size_t n = 0;
 
 	res = (char *)ft_memalloc(size);
 	while(n < size)
 	{
-		printf("%ld. %d\n", n, res[n]);
+		if(res[n] != 0)
+			printf("Index: %ld. Expected 0 got :%d\n", n, res[n]);
 		++n;
 		}
 	free (res);
@@ -1157,24 +1184,32 @@ int main(void)
 #ifdef MEMDEL
 int main(void)
 {
+	printf("ft_memdel: ");
 //	struct mallinfo2 before, after;
 //	before = mallinfo2();
 	void *ptr = malloc(sizeof(char) * 16);
 //	after = mallinfo2();
-	printf("Address before function call: %p\n", ptr);
+//	printf("Address before function call: %p\n", ptr);
 	ft_memdel (&ptr);
 //	int mem = before.uordblks - after.uordblks;
-	printf("Address after function call: %p\n", ptr);
+	if (ptr != NULL)
+		printf("Was expecting NULL got: %p\n", ptr);
+	else
+		printf("OK\n");
 	return (0);
 }
 #endif
 #ifdef STRNEW
 int main(void)
 {
+	printf("ft_strnew: ");
 	char *res = ft_strnew(5);
 
 	strcpy(res, "funny");
-	//printf("%s\n", res);
+	if (strcmp("funny", res))
+		printf("Was expecting: funny, got %s\n", res);
+	else
+		printf("OK\n");
 	free(res);
 	return (0);
 	}
@@ -1182,14 +1217,17 @@ int main(void)
 #ifdef STRDEL 
 int main(void)
 {
+	printf("ft_strdel: %s");
 //	struct mallinfo2 before, after;
 //	before = mallinfo2();
 	char *ptr = malloc(sizeof(char) * 16);
 //	after = mallinfo2();
-	printf("Address before function call: %p\n", ptr);
 	ft_strdel(&ptr);
 //	int mem = before.uordblks - after.uordblks;
-	printf("Address after function call: %p\n", ptr);
+	if (ptr != NULL)
+		printf("Was expecting NULL got: %p\n", ptr);
+	else
+		printf("OK\n");
 	return (0);
 }
 #endif
@@ -1198,18 +1236,22 @@ void print(char *a, int n)
 {
 	int nb = 0;
 
-	while(nb < n)
-		printf("%c", a[nb++]);
-	printf("\n");
+	while(nb < n && a[nb++] == 0)
+		;
+	if (nb != n)
+		printf("Expected nul on index: %d got: %c\n", n - 1 - nb, a[nb]);
+	else
+		printf("OK\n");
 }
 int main(void)
 {
+	printf("ft_strclr: ");
 	char a[] = "A nice giraffe"; 
 	int len = strlen(a);
-	printf("before function call: ");
-	print(a, len);
+//	printf("before function call: ");
+//	print(a, len);
 	ft_strclr(a);
-	printf("after function call:");
+//	printf("after function call:");
 	print(a, len);
 	return (0);
 }
@@ -1223,12 +1265,25 @@ void toup(char *c)
 		*c -= difference;
 }
 
+void test(char *s)
+{
+	int difference = 'a' - 'A';
+
+	while (*s != '\0' && ((*s >= 'A' && *s <= 'Z') || *s == ' '))
+		++s;
+	if (*s != '\0')
+		printf("Was expecting something else than: %c\n", *s);
+	else
+		printf("OK\n");
+}
 int main(void)
 {
+	printf("ft_striter: ");
 	char a[] = "A nice giraffe"; 
-	printf("before function call: %s\n", a);
+//	printf("before function call: %s\n", a);
 	ft_striter(a, &toup);
-	printf("after function call: %s\n", a);
+	test(a);
+//	printf("after function call: %s\n", a);
 	return (0);
 }
 #endif
@@ -1243,12 +1298,17 @@ void toup_if_first(unsigned int i, char *c)
 
 int main(void)
 {
+	printf("ft_striteri: ");
 	char a[] = "A nice giraffe"; 
-	printf("before function call:    %s\n", a);
-	ft_striteri(a, &toup_if_first);
-	printf("small a should be big A: %s\n", a);
-	printf("call with null:\n");
+//	printf("before function call:    %s\n", a);
+//	printf("small a should be big A: %s\n", a);
+//	printf("call with null:\n");
 	ft_striteri(NULL, NULL);
+	ft_striteri(a, &toup_if_first);
+	if (strcmp("A nice girAffe", a))
+		printf("Was expecting: A nice girAffe got: %s\n", a);
+	else
+		printf("OK\n");
 	return (0);
 }
 #endif
@@ -1270,15 +1330,20 @@ void test(char *s1, char *s2)
 }
 int main(void)
 {
+	printf("ft_strmap: ");
 	char a[] = "A nice giraffe"; 
 	char *res;
 
-	printf("Input:  %s\n", a);
+//	printf("Input:  %s\n", a);
 	res = ft_strmap(a, &toup);
-	printf("Output: %s\n", res);
-	test(a, res);
-	printf("call with null:\n");
+//	printf("Output: %s\n", res);
+//	printf("call with null:\n");
 	ft_strmap(NULL, NULL);
+	test(a, res);
+	if (strcmp("A NICE GIRAFFE", res))
+		printf("Was expecting: A NICE GIRAFFE got: %s\n", res);
+	else
+		printf("OK\n");
 	free(res);
 	return (0);
 }
@@ -1296,25 +1361,46 @@ void test(char *s1, char *s2)
 {
 	if (s1 == s2)
 		printf("* * *Error input and output have same address * * *");
+	else if (strcmp("A NICE GIRAFFE", s2))
+		printf("Was expecting: A NICE GIRAFFE got: %s\n", s2);
+	else
+		printf("OK\n");
 	return;
 }
 int main(void)
 {
+	printf("ft_strmapi: ");
 	char *res;
 	char a[] = "A nice giraffe"; 
 	
-	printf("before function call:    %s\n", a);
+//	printf("before function call:    %s\n", a);
 	res = ft_strmapi(a, &toup_if_first);
-	printf("small a should be big A: %s\n", res);
-	test(a, res);
-	printf("call with null:\n");
+//	printf("small a should be big A: %s\n", res);
+//	printf("call with null:\n");
 	ft_strmapi(NULL, NULL);
+	test(a, res);
 	return (0);
 }
 #endif
 #ifdef STREQU 
+void test(char *s1, char *s2)
+{
+	static int nb = 1;
+	int res = 0;
+
+	res = ft_strequ(s1, s2);
+	if(strcmp(s1, s2) != 0 && res != 0)
+		printf("Test %d failed was expecting 0 got: %d\n", nb, res);
+	else if(strcmp(s1, s2) == 0 && res != 1)
+		printf("Test %d failed was expecting 1 got: %d\n", nb, res);
+	else if (nb > 3)
+		printf("OK\n");
+	else
+		++nb;
+}
 int main(void)
 {
+	printf("ft_strequ: ");
 	char a[] = "A nice giraffe"; 
 	char *a2 = " nice";
 	char *a3 = "a nice";
@@ -1323,35 +1409,55 @@ int main(void)
 
 	s1 = a;
 	s2 = a;
-	printf("s1: %s\ns2: %s\n", s1, s2);
-	res = ft_strequ(s1, s2);
-	printf("Function should reuturn 1, it returns: %d\n", res);
+//	printf("s1: %s\ns2: %s\n", s1, s2);
+//	res = ft_strequ(s1, s2);
+	ft_strequ(NULL, NULL);
+	test(s1, s2);
+//	printf("Function should reuturn 1, it returns: %d\n", res);
 	s1 = a;
 	s2 = "A nic";
-	printf("s1: %s\ns2: %s\n", s1, s2);
-	res = ft_strequ(s1, s2);
-	printf("Function should reuturn 0, it returns: %d\n", res);
+//	printf("s1: %s\ns2: %s\n", s1, s2);
+//	res = ft_strequ(s1, s2);
+	test(s1, s2);
+//	printf("Function should reuturn 0, it returns: %d\n", res);
 
 	s1 = a;
 	s2 = a2;
-	printf("s1: %s\ns2: %s\n", s1, s2);
-	res = ft_strequ(s1, s2);
-	printf("Function should reuturn 0, it returns: %d\n", res);
+//	printf("s1: %s\ns2: %s\n", s1, s2);
+//	res = ft_strequ(s1, s2);
+	test(s1, s2);
+//	printf("Function should reuturn 0, it returns: %d\n", res);
 	s1 = a;
 	s2 = a3;
-	printf("s1: %s\ns2: %s\n", s1, s2);
-	res = ft_strequ(s1, s2);
-	printf("Function should reuturn 0, it returns: %d\n", res);
+//	printf("s1: %s\ns2: %s\n", s1, s2);
+//	res = ft_strequ(s1, s2);
+	test(s1, s2);
+//	printf("Function should reuturn 0, it returns: %d\n", res);
 
-	printf("call with null:\n");
-	res = ft_strequ(NULL, NULL);
-	printf("Function should reuturn 0, it returns: %d\n", res);
+//	printf("call with null:\n");
+//	printf("Function should reuturn 0, it returns: %d\n", res);
 	return (0);
 }
 #endif
 #ifdef STRNEQU 
+void test(char *s1, char *s2, int len)
+{
+	static int nb = 1;
+	int res = 0;
+
+	res = ft_strnequ(s1, s2, len);
+	if(strncmp(s1, s2, len) != 0 && res != 0)
+		printf("Test %d failed was expecting 0 got: %d\n", nb, res);
+	else if(strncmp(s1, s2, len) == 0 && res != 1)
+		printf("Test %d failed was expecting 1 got: %d\n", nb, res);
+	else if (nb > 4)
+		printf("OK\n");
+	else
+		++nb;
+}
 int main(void)
 {
+	printf("ft_strnequ: ");
 	char a[] = "A nice giraffe"; 
 	char *a2 = " nice";
 	char *a3 = "a nice";
@@ -1360,50 +1466,63 @@ int main(void)
 
 	s1 = a;
 	s2 = a;
-	printf("s1: %s\ns2: %s\n", s1, s2);
-	res = ft_strnequ(s1, s2, strlen(a) + 1);
-	printf("Function should reuturn 1, it returns: %d\n", res);
+	ft_strnequ(NULL, NULL, 50);
+//	printf("s1: %s\ns2: %s\n", s1, s2);
+	test(s1, s2, strlen(a) + 1);
+//	printf("Function should reuturn 1, it returns: %d\n", res);
 	s1 = a;
 	s2 = "A nic";
-	printf("s1: %s\ns2: %s\n", s1, s2);
-	res = ft_strnequ(s1, s2, 5);
-	printf("Function should reuturn 1, it returns: %d\n", res);
+//	printf("s1: %s\ns2: %s\n", s1, s2);
+	test(s1, s2, 5);
+//	printf("Function should reuturn 1, it returns: %d\n", res);
 
 	s1 = a;
 	s2 = a2;
-	printf("s1: %s\ns2: %s\n", s1, s2);
-	res = ft_strnequ(s1, s2, 7);
-	printf("Function should reuturn 0, it returns: %d\n", res);
+//	printf("s1: %s\ns2: %s\n", s1, s2);
+	test(s1, s2, 7);
+//	printf("Function should reuturn 0, it returns: %d\n", res);
 	s1 = a;
 	s2 = a3;
-	printf("s1: %s\ns2: %s\n", s1, s2);
-	res = ft_strnequ(s1, s2, 100);
-	printf("Function should reuturn 0, it returns: %d\n", res);
+//	printf("s1: %s\ns2: %s\n", s1, s2);
+	test(s1, s2, 100);
+//	printf("Function should reuturn 0, it returns: %d\n", res);
 	s1 = a;
 	s2 = "giraffe";
-	printf("s1: %s\ns2: %s\n", s1, s2);
-	res = ft_strnequ(s1, s2, 100);
-	printf("Function should reuturn 0, it returns: %d\n", res);
-	printf("call with null:\n");
-	res = ft_strnequ(NULL, NULL, 50);
-	printf("Function should reuturn 0, it returns: %d\n", res);
+//	printf("s1: %s\ns2: %s\n", s1, s2);
+	test(s1, s2, 100);
+//	printf("Function should reuturn 0, it returns: %d\n", res);
+//	printf("call with null:\n");
+//	printf("Function should reuturn 0, it returns: %d\n", res);
 	return (0);
 }
 #endif
 #ifdef STRSUB 
 int main(void)
 {
+	printf("ft_strsub: ");
 	char a[] = "A nice giraffe"; 
 	char *res;
+	int nb = 1;
 
 	res = ft_strsub(a, 2, 4);
-	printf("Should return: nice, returns: %s\n", res);
+	if (strcmp("nice", res))
+		printf("Test %d. Should return: nice, returns: %s\n", nb, res);
+	else
+		++nb;
 	res = ft_strsub(a, 2, 0);
-	printf("Should return:, returns: %s\n", res);
+	if (strcmp("", res))
+		printf("Test %d. Should return:, returns: %s\n",nb, res);
+	else
+		++nb;
 	res = ft_strsub(a, 0, 14);
-	printf("Should return: A nice giraffe, returns: %s\n", res);
-	printf("Testing NULL\n");
+	if (strcmp("A nice giraffe", res))
+		printf("Test %d. Should return: A nice giraffe, returns: %s\n", nb, res);
+	else
+		++nb;
+	//printf("Testing NULL\n");
 	res = ft_strsub(NULL, 5, 50);
+	if (nb > 2)
+		printf ("OK\n");
 	return (0);
 }
 #endif
