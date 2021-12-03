@@ -1744,18 +1744,15 @@ int main(void)
 #ifdef STRJOIN 
 int main(void)
 {
-	printf("ft_strjoin: ");
 	char a[] = "Urho kal";
 	char *a2 = "eva Kekkonen";
 	char *res;
 
-//	printf("Concatenating words; '%s' and '%s'\n", a, a2);
+	printf("Concatenating words; '%s' and '%s'\n", a, a2);
 	res = ft_strjoin(a, a2);
-	assert(strcmp("Urho kaleva Kekkonen", res));
-//	printf("Result: %s\n", res);
-//	printf("Testing NULL\n");
+	printf("Result: %s\n", res);
+	printf("Testing NULL\n");
 	res = ft_strjoin(NULL, NULL);
-	printf("OK\n");
 	return (0);
 }
 #endif
@@ -1861,7 +1858,7 @@ void print_split(char **res)
 	printf("Test: %d\n", ++g_counter);
 	if(res == NULL)
 	{
-		//printf("NULL returned\n\n");
+		printf("NULL returned\n\n");
 		return ;
 	}
 	while(*res)
