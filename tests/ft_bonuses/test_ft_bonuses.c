@@ -63,7 +63,7 @@ void test_function_ft_lstdel(void)
 	t_list *link2 = ft_lstnew("This is link nb 2\n", 30);
 	head->next = link1;
 	head->next->next = link2;
-	ft_lstdel(&head , ft_memndel);
+	ft_lstdel(&head, ft_memndel);
 	TEST_ASSERT_NULL (head);
 	TEST_ASSERT_NULL (link1->next);
 	TEST_ASSERT_NULL (link2->next);
@@ -80,6 +80,7 @@ void test_function_ft_lstdel(void)
 }	
 void test_ft_lstadd(void)
 {
+	printf("\n-----ft_lstadd-----\n");
 	t_list *head = ft_lstnew("This is the first head.", 30);
 	t_list *new_head = ft_lstnew("I want to be head in place of head!!", 40); 
 	t_list *displaced_head = head;
@@ -114,6 +115,7 @@ void ft_catcontent(t_list *dog)
 }
 void test_ft_lstiter(void)
 {
+	printf("\n-----ft_lstiter----\n");
 	t_list *head = ft_lstnew("Dog", 4);
 	t_list *new_head = ft_lstnew("Dog", 4); 
 	t_list *new_head_head = ft_lstnew("Dog", 4);
@@ -140,6 +142,7 @@ t_list *ahead(t_list *link)
 }
 void test_ft_lstmap(void)
 {
+	printf("\n-----ft_lstmap-----\n");
 	t_list *head = ft_lstnew("I am the head", 50);
 	t_list *new_head = ft_lstnew("I want to be head in place of head", 50); 
 	t_list *new_head_head = ft_lstnew("I want to be ahed of the one placing the head", 50);
@@ -167,10 +170,10 @@ void test_ft_lstmap(void)
 int main(void) {
     UNITY_BEGIN();
 //	RUN_TEST(test_ft_lstnew);
- //	RUN_TEST(test_function_lstdelone);
- //	RUN_TEST(test_function_ft_lstdel);
+//	RUN_TEST(test_function_lstdelone);
+	RUN_TEST(test_function_ft_lstdel);
 // 	RUN_TEST(test_ft_lstadd);
 //	RUN_TEST(test_ft_lstiter);
-	RUN_TEST(test_ft_lstmap);
+//	RUN_TEST(test_ft_lstmap);
     return UNITY_END();
 }

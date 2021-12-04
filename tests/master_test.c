@@ -100,7 +100,7 @@ int main(void)
 {
 	const char src[] = "Luke, who's your daddy?";
 	char dest_enough[30];
-	char dest_short[30];
+//	char dest_short[30];
 	char dest_third[30];
 	char *dest;
 	int i = 0;
@@ -117,9 +117,9 @@ int main(void)
 	assert(dest_enough == dest);
 	//printf("OK\n");
 	//printf("Address of dest: %p, Address of return: %p\n", dest_enough, dest);
-	dest = ft_strncpy(dest_short, src, 9);
+	//dest = ft_strncpy(dest_short, src, 9);
 	//printf("Testing for n < src. N = 9 output usually differs: %lu ", strlen(dest));
-	assert(strlen(dest) != 9);
+//	assert(strlen(dest) != 9);
 	//printf(":OK\n");
 	//printf("Input:  %s\n", src);
 	//printf("Output: %s\n", dest);
@@ -143,11 +143,11 @@ int main(void)
 
 int main()
 {
+	printf("ft_strcat: ");
 	char d1[30] = "One cat to rule ";
 	const char s[] = "them all.";
 	char *ret;
 	
-	printf("ft_strcat: ");
 	//printf("Dest: %s\nsource: %s\n", d1, s);
 	ret = ft_strcat(d1, s);
 	assert(!strcmp("One cat to rule them all.", ret));
@@ -160,6 +160,7 @@ int main()
 	ret = ft_strcat(d2, s);
 //	printf("ft_strcat nospace, overflows?: %s\n", ret);
 	assert(!strcmp("One cat to rule them all.", ret));
+	printf("OK\n");
 	return(0);
 }
 #endif
@@ -1033,7 +1034,7 @@ int main(void)
 	//Test overflow, might segfault the free if d1 writes to d2	
 	char_test_memcpy(d1 + 1, d2 + 1, s1, sizeof(s1) + 10);
 	if(g_no_error)
-		printf("OK");
+		printf("OK\n");
 	free(d1);
 	free(d2);
 	return (0);
@@ -1104,6 +1105,7 @@ int main(void)
 	test("Kekkonen skied and Kekkonen fished", 'f', 50 );
 	test("Kekkonen skied and Kekkonen fished", 'z', 50 );
 	test("Kekkonen skied and Kekkonen fishedz", 'z', 50 );
+	printf("\n");
 	return (0);
 }
 
@@ -1363,7 +1365,7 @@ int main(void)
 //		printf("* * *Look at me* * *");
 	}
 	if (not_error)
-		printf("OK");
+		printf("OK\n");
 	return (0);
 }
 #endif
@@ -1432,8 +1434,8 @@ int main(void)
 #ifdef STRDEL 
 int main(void)
 {
-	printf("ft_strdel: %s");
-//	struct mallinfo2 before, after;
+	printf("ft_strdel: ");
+//	struct mallinfo2 beore, after;
 //	before = mallinfo2();
 	char *ptr = malloc(sizeof(char) * 16);
 //	after = mallinfo2();
@@ -1482,7 +1484,7 @@ void toup(char *c)
 
 void test(char *s)
 {
-	int difference = 'a' - 'A';
+//	int difference = 'a' - 'A';
 
 	while (*s != '\0' && ((*s >= 'A' && *s <= 'Z') || *s == ' '))
 		++s;
@@ -1620,7 +1622,7 @@ int main(void)
 	char *a2 = " nice";
 	char *a3 = "a nice";
 	char *s1, *s2;
-	int res = 0;
+//	int res = 0;
 
 	s1 = a;
 	s2 = a;
@@ -1677,7 +1679,7 @@ int main(void)
 	char *a2 = " nice";
 	char *a3 = "a nice";
 	char *s1, *s2;
-	int res = 0;
+//	int res = 0;
 
 	s1 = a;
 	s2 = a;
@@ -1751,7 +1753,7 @@ int main(void)
 
 //	printf("Concatenating words; '%s' and '%s'\n", a, a2);
 	res = ft_strjoin(a, a2);
-	assert(strcmp("Urho kaleva Kekkonen", res));
+	assert(!strcmp("Urho kaleva Kekkonen", res));
 //	printf("Result: %s\n", res);
 //	printf("Testing NULL\n");
 	res = ft_strjoin(NULL, NULL);
@@ -1854,8 +1856,17 @@ int main(void)
 #endif
 #ifdef STRSPLIT
 
-int g_counter = 0;
+#include "Unity/unity.h"
+#include "Unity/unity.c"
+#include "Unity/unity_internals.h"
 
+int g_counter = 0;
+void setUp(void){
+}
+
+void tearDown(void) {
+}
+/*
 void print_split(char **res)
 {
 	printf("Test: %d\n", ++g_counter);
@@ -1868,6 +1879,64 @@ void print_split(char **res)
 		printf("%s\n", *res++);
 	printf("\n");
 }
+*/
+void test_correct_array(void)
+{
+	char **res;
+	res = ft_strsplit("*Is*this*planet*earth*", '*');
+	char *correct[5] = {"Is", "this", "planet", "earth", NULL};
+	TEST_ASSERT_EQUAL_STRING_ARRAY(correct, res, 5);
+	
+	res = ft_strsplit("Is this planet earth", ' ');
+	TEST_ASSERT_EQUAL_STRING_ARRAY(correct, res, 5);
+
+	res = ft_strsplit("****Is*this****planet*earth", '*');
+	TEST_ASSERT_EQUAL_STRING_ARRAY(correct, res, 5);
+}
+void test_return_input(void)
+{
+	char **res;
+	char *correct[2] = {"*Is*this*planet*earth*", NULL};
+	res = ft_strsplit("*Is*this*planet*earth*", '$');
+	TEST_ASSERT_EQUAL_STRING_ARRAY(correct, res, 2);
+
+	res = ft_strsplit("*Is*this*planet*earth*", '\0');
+	TEST_ASSERT_EQUAL_STRING_ARRAY(correct, res, 2);
+}
+void test_hello(void)
+{
+	char **res;
+	char *correct[2] = {"Hello", NULL};
+	res = ft_strsplit("*Hello*", '*');
+	TEST_ASSERT_EQUAL_STRING_ARRAY(correct, res, 2);
+
+	res = ft_strsplit("*Hello", '*');
+	TEST_ASSERT_EQUAL_STRING_ARRAY(correct, res, 2);
+
+	res = ft_strsplit("Hello*", '*');
+	TEST_ASSERT_EQUAL_STRING_ARRAY(correct, res, 2);
+
+	res = ft_strsplit("         Hello", ' ');
+	TEST_ASSERT_EQUAL_STRING_ARRAY(correct, res, 2);
+
+	res = ft_strsplit("Hello              ", ' ');
+	TEST_ASSERT_EQUAL_STRING_ARRAY(correct, res, 2);
+}
+void test_with_null(void)
+{
+	char **res;
+	res = ft_strsplit(NULL, '*');
+	TEST_ASSERT_NULL(res);
+}
+void test_extra_case(void)
+{
+	char **res;
+	char *correct[11] = {"Happy", "boy", "is", "taking", "a", "walk", "with", "a", "laughing", "dog.", NULL};
+	char *s = "Happy boy is taking a walk with a laughing dog.";
+	res = ft_strsplit(s, ' ');
+	TEST_ASSERT_EQUAL_STRING_ARRAY(correct, res, 11);
+}
+
 int main(void)
 {
 	//Maybe do test file for evaluations
@@ -1876,71 +1945,71 @@ int main(void)
 	//Test finding \0
 	//Test with multiple delimiters
 	//Test delimiter word \0 pattern
-	char **res;
 	//1
-	res = ft_strsplit("*Is*this*planet*earth*", '*');
-	print_split(res);
+	UNITY_BEGIN();
+	RUN_TEST(test_correct_array);
+	RUN_TEST(test_return_input);
+	RUN_TEST(test_hello);
+	RUN_TEST(test_with_null);
+	RUN_TEST(test_extra_case);
+	return UNITY_END();
+	//print_split(res);
 	//2
-	res = ft_strsplit("Is this planet earth", ' ');
-	print_split(res);
+	//print_split(res);
 	//3
-	res = ft_strsplit("*Is*this*planet*earth*", '$');
-	print_split(res);
+//	print_split(res);
 	//4
-	res = ft_strsplit("*Is*this*planet*earth*", '\0');
-	print_split(res);
+//	print_split(res);
 	//5
-	res = ft_strsplit("****Is*this****planet*earth", '*');
-	print_split(res);
+//	print_split(res);
 	//6
-	res = ft_strsplit("   *  Is*this**   ***planet *earth*", '*');
-	print_split(res);
+//	res = ft_strsplit("   *  Is*this**   ***planet *earth*", '*');
+//	print_split(res);
 	//7
-	res = ft_strsplit("*Hello*", '*');
-	print_split(res);
+//	print_split(res);
 	//8
-	res = ft_strsplit("*Hello", '*');
-	print_split(res);
+//	print_split(res);
 	//9
-	res = ft_strsplit("Hello*", '*');
-	print_split(res);
+//	print_split(res);
 	//10
-	res = ft_strsplit("         Hello", ' ');
-	print_split(res);
+//	print_split(res);
 	//11
-	res = ft_strsplit("Hello              ", ' ');
-	print_split(res);
+//	print_split(res);
 	//12
-	res = ft_strsplit(NULL, '*');
-	print_split(res);
+//	print_split(res);
 	//13
-	char *s = "Happy boy is taking a walk with a laughing dog.";
-	res = ft_strsplit(s, ' ');
 	//printf("%s\n", res[0]);
-	print_split(res);
+//	print_split(res);
 	return (0);
 }
 #endif
 #ifdef ITOA
 int main(void)
 {
+	printf("ft_itao: ");
 	char *res;
 	int nb = 1;
 
 	res = ft_itoa(nb);
-	printf("%s\n", res);
+	assert(!strcmp("1", res));
+	//printf("%s\n", res);
 	nb = -1;
 	res = ft_itoa(nb);
-	printf("%s\n", res);
+	assert(!strcmp("-1", res));
+	//printf("%s\n", res);
 	nb = INT_MAX;
 	res = ft_itoa(nb);
-	printf("%s\n", res);
+	assert(!strcmp("2147483647", res));
+//	printf("%s\n", res);
 	nb = INT_MIN;
 	res = ft_itoa(nb);
-	printf("%s\n", res);
+	assert(!strcmp("-2147483648", res));
+//	printf("%s\n", res);
 	nb = 0;
 	res = ft_itoa(nb);
-	printf("%s\n", res);
+	assert(!strcmp("0", res));
+//	printf("%s\n", res);
+	printf("OK\n");	
 	return (0);
 }
 #endif
@@ -1994,6 +2063,7 @@ int main(void)
 int main(void)
 {
 	ft_putchar_fd('z', 1);
+	printf("\n");
 	return (0);
 }
 #endif
